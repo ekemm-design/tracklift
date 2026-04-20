@@ -1,0 +1,21 @@
+{
+  "name": "TrackLift – Fitness Tracker",
+  "short_name": "TrackLift",
+  "description": "Dein persönliches Fitness-Tracking: Pläne, Trainings, Fortschritt & Körpermaße",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0d0d14",
+  "theme_color": "#7c3aed",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["health", "fitness", "sports"]
+}
