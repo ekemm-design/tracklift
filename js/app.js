@@ -147,6 +147,7 @@ App.spontaneous = {
     { id: 'tennis',       name: 'Tennis',          icon: '🎾', color: '#65a30d' },
     { id: 'skifahren',    name: 'Skifahren',       icon: '⛷️',  color: '#60a5fa' },
     { id: 'kraftfrei',    name: 'Freies Krafttr.', icon: '💪', color: '#7c3aed' },
+    { id: 'taekwondo',    name: 'Taekwondo',       icon: '🥋', color: '#dc2626' },
     { id: 'sonstiges',    name: 'Sonstiges',       icon: '🏅', color: '#64748b' },
   ],
 
