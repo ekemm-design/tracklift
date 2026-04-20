@@ -282,6 +282,81 @@ var PlansDB = (function () {
         },
       ]
     },
+    {
+      id: 'elias',
+      name: 'Elias',
+      description: '5-Tage-Split: Brust+Rücken, Schultern+Arme, Beine – jede Gruppe 2× pro Woche. 90 Sek. Pause.',
+      frequency: '5x / Woche',
+      level: 'Intermediate',
+      isPreset: true,
+      days: [
+        {
+          name: 'Tag 1 – Brust & Rücken',
+          focus: 'Brust · Rücken',
+          exercises: [
+            { exerciseId: 'incline-db-bench',  sets: 3, reps: '8–12',  restSeconds: 90 },
+            { exerciseId: 'db-bench',          sets: 2, reps: '8–12',  restSeconds: 90 },
+            { exerciseId: 'seated-cable-row',  sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'cable-row-wide',    sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'lat-pulldown',      sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'pec-deck',          sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'rear-delt-fly',     sets: 3, reps: '15–20', restSeconds: 90 },
+          ]
+        },
+        {
+          name: 'Tag 2 – Schultern & Arme',
+          focus: 'Schultern · Bizeps · Trizeps',
+          exercises: [
+            { exerciseId: 'db-ohp',               sets: 3, reps: '8–12',  restSeconds: 90 },
+            { exerciseId: 'cable-lateral-raise',  sets: 4, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'lateral-raise',        sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'bayesian-curl',        sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'preacher-curl',        sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'hammer-curl',          sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'overhead-tricep-ext',  sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'tricep-pushdown',      sets: 3, reps: '12–15', restSeconds: 90 },
+          ]
+        },
+        {
+          name: 'Tag 3 – Beine',
+          focus: 'Quadrizeps · Ischiocrurale · Waden',
+          exercises: [
+            { exerciseId: 'squat',         sets: 4, reps: '6–10',  restSeconds: 90 },
+            { exerciseId: 'leg-press',     sets: 3, reps: '10–15', restSeconds: 90 },
+            { exerciseId: 'leg-extension', sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'leg-curl',      sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'calf-press',    sets: 4, reps: '15–20', restSeconds: 90 },
+          ]
+        },
+        {
+          name: 'Tag 4 – Brust & Rücken',
+          focus: 'Brust · Rücken',
+          exercises: [
+            { exerciseId: 'incline-db-bench',  sets: 3, reps: '8–12',  restSeconds: 90 },
+            { exerciseId: 'db-bench',          sets: 2, reps: '8–12',  restSeconds: 90 },
+            { exerciseId: 'seated-cable-row',  sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'cable-row-wide',    sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'lat-pulldown',      sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'pec-deck',          sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'rear-delt-fly',     sets: 3, reps: '15–20', restSeconds: 90 },
+          ]
+        },
+        {
+          name: 'Tag 5 – Schultern & Arme',
+          focus: 'Schultern · Bizeps · Trizeps',
+          exercises: [
+            { exerciseId: 'db-ohp',               sets: 3, reps: '8–12',  restSeconds: 90 },
+            { exerciseId: 'cable-lateral-raise',  sets: 4, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'lateral-raise',        sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'bayesian-curl',        sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'preacher-curl',        sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'hammer-curl',          sets: 3, reps: '12–15', restSeconds: 90 },
+            { exerciseId: 'overhead-tricep-ext',  sets: 3, reps: '10–12', restSeconds: 90 },
+            { exerciseId: 'tricep-pushdown',      sets: 3, reps: '12–15', restSeconds: 90 },
+          ]
+        },
+      ]
+    },
   ];
 
   function getAll() {

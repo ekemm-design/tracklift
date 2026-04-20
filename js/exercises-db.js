@@ -99,6 +99,11 @@ var ExercisesDB = (function () {
     { id: 'cable-crunch',        name: 'Kabel Crunch',             nameEn: 'Cable Crunch',          primary: 'core',      secondary: [],                      equipment: 'Kabel',       category: 'isolation', desc: 'Crunches am Kabelzug für Widerstand über den gesamten Bereich.' },
     { id: 'mountain-climber',    name: 'Mountain Climber',         nameEn: 'Mountain Climber',      primary: 'core',      secondary: ['shoulders'],           equipment: 'Körpergewicht', category: 'isolation', desc: 'Dynamische Knie-zur-Brust-Bewegung in der Liegestützposition.' },
     { id: 'dead-bug',            name: 'Dead Bug',                 nameEn: 'Dead Bug',              primary: 'core',      secondary: [],                      equipment: 'Körpergewicht', category: 'isolation', desc: 'Gegenseitige Arm-Bein-Streckung in Rückenlage für Core-Stabilität.' },
+
+    // ── ZUSATZ ───────────────────────────────────────────────────────
+    { id: 'bayesian-curl',       name: 'Bayesian Curl',            nameEn: 'Bayesian Curl',         primary: 'arms',      secondary: [],                      equipment: 'Kabel',       category: 'isolation', desc: 'Kabelcurl mit dem Kabel hinter dem Körper (untere Rolle). Maximale Dehnung des Bizeps am Umkehrpunkt.' },
+    { id: 'cable-row-wide',      name: 'Breites Kabel-Rudern',     nameEn: 'Wide-Grip Cable Row',   primary: 'back',      secondary: ['biceps'],              equipment: 'Kabel',       category: 'compound',  desc: 'Rudern am Kabelzug mit breitem Griff, stärkere Aktivierung des oberen Rückens und der Rhomboideen.' },
+    { id: 'calf-press',          name: 'Wadendrücken',             nameEn: 'Calf Press (Leg Press)', primary: 'legs',     secondary: [],                      equipment: 'Maschine',    category: 'isolation', desc: 'Wadendrücken an der Beinpresse – Fersen auf der unteren Kante der Plattform.' },
   ];
 
   // SVG illustrations (consistent style, one per primary muscle group)
