@@ -101,6 +101,14 @@ var DashboardPage = (function () {
       html += '</div>';
     }
 
+    // ── Spontanes Workout ─────────────────────────────────────
+    html += '<button class="w-full text-left card p-4 flex items-center gap-4 hover:border-purple-600 transition-all" onclick="App.spontaneous.showModal()" style="cursor:pointer;">';
+    html += '<div class="text-3xl">⚡</div>';
+    html += '<div><div class="font-semibold">Spontanes Workout</div>';
+    html += '<div class="text-sm mt-0.5" style="color:#64748b;">Laufen, CrossFit, Sprinten & mehr – zählt für deine Streak</div></div>';
+    html += '<div class="ml-auto" style="color:#64748b;">→</div>';
+    html += '</button>';
+
     // ── Weekly volume chart ───────────────────────────────────
     html += '<div class="card p-4">';
     html += '<div class="flex items-center justify-between mb-3">';

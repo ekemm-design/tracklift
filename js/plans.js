@@ -55,8 +55,8 @@ var PlansPage = (function () {
     if (!isActive) {
       html += '<button class="btn-secondary text-xs py-1.5 px-3" onclick="PlansPage.setActive(\'' + plan.id + '\')">Aktivieren</button>';
     }
+    html += '<button class="btn-secondary text-xs py-1.5 px-3" onclick="PlansPage.showEditModal(\'' + plan.id + '\')">✏️</button>';
     if (!plan.isPreset) {
-      html += '<button class="btn-secondary text-xs py-1.5 px-3" onclick="PlansPage.showEditModal(\'' + plan.id + '\')">✏️</button>';
       html += '<button class="btn-danger text-xs py-1.5 px-3" onclick="PlansPage.deletePlan(\'' + plan.id + '\')">✕</button>';
     }
     html += '</div></div>';
@@ -81,9 +81,7 @@ var PlansPage = (function () {
     html += '<div class="flex items-center gap-3">';
     html += '<button class="btn-secondary text-sm py-1.5 px-3" onclick="PlansPage.render()">← Zurück</button>';
     html += '<h1 class="text-xl font-bold flex-1 truncate">' + plan.name + '</h1>';
-    if (!plan.isPreset) {
-      html += '<button class="btn-secondary text-sm py-1.5 px-3" onclick="PlansPage.showEditModal(\'' + plan.id + '\')">✏️ Bearbeiten</button>';
-    }
+    html += '<button class="btn-secondary text-sm py-1.5 px-3" onclick="PlansPage.showEditModal(\'' + plan.id + '\')">✏️</button>';
     if (!isActive) {
       html += '<button class="btn-primary text-sm" onclick="PlansPage.setActive(\'' + plan.id + '\');PlansPage.viewPlan(\'' + plan.id + '\')">Aktivieren</button>';
     } else {
@@ -289,7 +287,8 @@ var PlansPage = (function () {
 
     var html = '<div class="p-5">';
     html += '<div class="flex items-center justify-between mb-5">';
-    html += '<h2 class="text-xl font-bold">Plan bearbeiten</h2>';
+    var isPreset = !!plan.isPreset;
+    html += '<h2 class="text-xl font-bold">Plan bearbeiten' + (isPreset ? ' <span class="text-sm font-normal" style="color:#64748b;">(Kopie wird gespeichert)</span>' : '') + '</h2>';
     html += '<button onclick="App.modal.close()" style="color:#64748b;font-size:20px;">✕</button>';
     html += '</div>';
 

@@ -130,6 +130,119 @@ App.sync = {
   },
 };
 
+// ── Spontanes Workout ─────────────────────────────────────
+App.spontaneous = {
+  ACTIVITIES: [
+    { id: 'laufen',       name: 'Laufen',         icon: '🏃', color: '#10b981' },
+    { id: 'sprinten',     name: 'Sprinten',        icon: '⚡', color: '#fbbf24' },
+    { id: 'crossfit',     name: 'CrossFit',        icon: '🤸', color: '#ef4444' },
+    { id: 'radfahren',    name: 'Radfahren',       icon: '🚴', color: '#3b82f6' },
+    { id: 'schwimmen',    name: 'Schwimmen',       icon: '🏊', color: '#06b6d4' },
+    { id: 'hiit',         name: 'HIIT',            icon: '🔥', color: '#f97316' },
+    { id: 'boxen',        name: 'Boxen',           icon: '🥊', color: '#8b5cf6' },
+    { id: 'yoga',         name: 'Yoga',            icon: '🧘', color: '#a78bfa' },
+    { id: 'wandern',      name: 'Wandern',         icon: '🥾', color: '#22c55e' },
+    { id: 'fussball',     name: 'Fußball',         icon: '⚽', color: '#16a34a' },
+    { id: 'basketball',   name: 'Basketball',      icon: '🏀', color: '#ea580c' },
+    { id: 'tennis',       name: 'Tennis',          icon: '🎾', color: '#65a30d' },
+    { id: 'skifahren',    name: 'Skifahren',       icon: '⛷️',  color: '#60a5fa' },
+    { id: 'kraftfrei',    name: 'Freies Krafttr.', icon: '💪', color: '#7c3aed' },
+    { id: 'sonstiges',    name: 'Sonstiges',       icon: '🏅', color: '#64748b' },
+  ],
+
+  _selected: null,
+
+  showModal: function() {
+    var self = App.spontaneous;
+    self._selected = null;
+    var html = '<div class="p-5">';
+    html += '<div class="flex items-center justify-between mb-4">';
+    html += '<h2 class="text-xl font-bold">Spontanes Workout</h2>';
+    html += '<button onclick="App.modal.close()" style="color:#64748b;font-size:20px;line-height:1;">✕</button>';
+    html += '</div>';
+    html += '<p class="text-sm mb-4" style="color:#64748b;">Wähle eine Aktivität – zählt für deine 🔥 Streak</p>';
+
+    // Activity grid
+    html += '<div class="grid grid-cols-3 gap-2 mb-4" id="activity-grid">';
+    self.ACTIVITIES.forEach(function(a) {
+      html += '<button id="act-' + a.id + '" onclick="App.spontaneous.select(\'' + a.id + '\')" ' +
+        'class="card2 p-3 text-center rounded-xl transition-all" ' +
+        'style="cursor:pointer;border:2px solid transparent;">' +
+        '<div class="text-2xl mb-1">' + a.icon + '</div>' +
+        '<div class="text-xs font-medium leading-tight">' + a.name + '</div>' +
+        '</button>';
+    });
+    html += '</div>';
+
+    // Duration + notes
+    html += '<div class="space-y-3">';
+    html += '<div class="grid grid-cols-2 gap-3">';
+    html += '<div><label class="text-sm font-medium" style="color:#94a3b8;">Dauer (min)</label>';
+    html += '<input type="number" id="spon-duration" class="input-field mt-1" placeholder="z.B. 45" min="1" /></div>';
+    html += '<div><label class="text-sm font-medium" style="color:#94a3b8;">Intensität</label>';
+    html += '<select id="spon-intensity" class="input-field mt-1">';
+    html += '<option value="1">😴 Locker</option>';
+    html += '<option value="2">🚶 Moderat</option>';
+    html += '<option value="3" selected>💪 Mittel</option>';
+    html += '<option value="4">🔥 Hart</option>';
+    html += '<option value="5">💀 Maximal</option>';
+    html += '</select></div></div>';
+    html += '<div><label class="text-sm font-medium" style="color:#94a3b8;">Notiz (optional)</label>';
+    html += '<input id="spon-note" class="input-field mt-1" placeholder="z.B. 5km in 25min..." /></div>';
+    html += '</div>';
+
+    html += '<div class="flex gap-3 mt-4">';
+    html += '<button class="btn-secondary flex-1 py-2.5" onclick="App.modal.close()">Abbrechen</button>';
+    html += '<button class="btn-primary flex-1 py-2.5" onclick="App.spontaneous.save()">Speichern ✓</button>';
+    html += '</div></div>';
+    App.modal.open(html);
+  },
+
+  select: function(id) {
+    var self = App.spontaneous;
+    self._selected = id;
+    self.ACTIVITIES.forEach(function(a) {
+      var btn = document.getElementById('act-' + a.id);
+      if (!btn) return;
+      if (a.id === id) {
+        btn.style.borderColor = a.color;
+        btn.style.background = a.color + '22';
+      } else {
+        btn.style.borderColor = 'transparent';
+        btn.style.background = '';
+      }
+    });
+  },
+
+  save: function() {
+    var self = App.spontaneous;
+    if (!self._selected) { Utils.toast('Bitte eine Aktivität wählen', 'error'); return; }
+    var act = self.ACTIVITIES.find(function(a){ return a.id === self._selected; });
+    var duration = parseInt((document.getElementById('spon-duration')||{}).value) || 0;
+    var intensity = parseInt((document.getElementById('spon-intensity')||{}).value) || 3;
+    var note = (document.getElementById('spon-note')||{}).value || '';
+
+    var log = {
+      id: Store.uid(),
+      date: Store.todayStr(),
+      planId: 'spontaneous',
+      dayName: act.icon + ' ' + act.name,
+      duration: duration * 60,
+      spontaneous: true,
+      activityId: self._selected,
+      intensity: intensity,
+      note: note,
+      exercises: [],
+    };
+    Store.saveWorkoutLog(log);
+    App.modal.close();
+    App.updateSidebarStreak();
+    Utils.confetti();
+    Utils.toast(act.icon + ' ' + act.name + ' gespeichert! Streak bleibt! 🔥');
+    DashboardPage.render();
+  },
+};
+
 App.updateSidebarStreak = function() {
   var streak = Store.getStreak();
   var el = document.getElementById('sidebar-streak-count');

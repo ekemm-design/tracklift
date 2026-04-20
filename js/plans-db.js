@@ -286,11 +286,17 @@ var PlansDB = (function () {
 
   function getAll() {
     var custom = Store.getCustomPlans();
-    return PRESET_PLANS.concat(custom);
+    // Custom plans override presets with same ID
+    var customIds = custom.map(function(p){ return p.id; });
+    var presets = PRESET_PLANS.filter(function(p){ return !customIds.includes(p.id); });
+    return presets.concat(custom);
   }
 
   function getById(id) {
-    return getAll().find(function(p){ return p.id === id; });
+    // Custom plans take precedence over presets
+    var custom = Store.getCustomPlans().find(function(p){ return p.id === id; });
+    if (custom) return custom;
+    return PRESET_PLANS.find(function(p){ return p.id === id; });
   }
 
   function getLevelBadge(level) {
