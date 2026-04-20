@@ -56,6 +56,7 @@ var PlansPage = (function () {
       html += '<button class="btn-secondary text-xs py-1.5 px-3" onclick="PlansPage.setActive(\'' + plan.id + '\')">Aktivieren</button>';
     }
     if (!plan.isPreset) {
+      html += '<button class="btn-secondary text-xs py-1.5 px-3" onclick="PlansPage.showEditModal(\'' + plan.id + '\')">✏️</button>';
       html += '<button class="btn-danger text-xs py-1.5 px-3" onclick="PlansPage.deletePlan(\'' + plan.id + '\')">✕</button>';
     }
     html += '</div></div>';
@@ -80,6 +81,9 @@ var PlansPage = (function () {
     html += '<div class="flex items-center gap-3">';
     html += '<button class="btn-secondary text-sm py-1.5 px-3" onclick="PlansPage.render()">← Zurück</button>';
     html += '<h1 class="text-xl font-bold flex-1 truncate">' + plan.name + '</h1>';
+    if (!plan.isPreset) {
+      html += '<button class="btn-secondary text-sm py-1.5 px-3" onclick="PlansPage.showEditModal(\'' + plan.id + '\')">✏️ Bearbeiten</button>';
+    }
     if (!isActive) {
       html += '<button class="btn-primary text-sm" onclick="PlansPage.setActive(\'' + plan.id + '\');PlansPage.viewPlan(\'' + plan.id + '\')">Aktivieren</button>';
     } else {
@@ -262,8 +266,9 @@ var PlansPage = (function () {
 
     if (!days.length || !days[0].exercises.length) { Utils.toast('Mindestens 1 Tag mit Übung benötigt', 'error'); return; }
 
+    var existingId = document.getElementById('plan-create-form').dataset.editId;
     var plan = {
-      id: Store.uid(),
+      id: existingId || Store.uid(),
       name: name.trim(),
       description: (document.getElementById('plan-desc')||{}).value || '',
       level: (document.getElementById('plan-level')||{}).value || 'Intermediate',
@@ -273,9 +278,73 @@ var PlansPage = (function () {
     };
     Store.saveCustomPlan(plan);
     App.modal.close();
-    Utils.toast('Plan gespeichert! 🎉');
+    Utils.toast(existingId ? 'Plan aktualisiert! ✓' : 'Plan gespeichert! 🎉');
     render();
   }
 
-  return { render, viewPlan, setActive, deletePlan, showCreateModal, addDayToForm, addExToDay, saveNewPlan };
+  function showEditModal(planId) {
+    var plan = PlansDB.getById(planId);
+    if (!plan) return;
+    var allEx = ExercisesDB.getAll();
+
+    var html = '<div class="p-5">';
+    html += '<div class="flex items-center justify-between mb-5">';
+    html += '<h2 class="text-xl font-bold">Plan bearbeiten</h2>';
+    html += '<button onclick="App.modal.close()" style="color:#64748b;font-size:20px;">✕</button>';
+    html += '</div>';
+
+    html += '<div class="space-y-4" id="plan-create-form" data-edit-id="' + plan.id + '">';
+    html += '<div><label class="text-sm font-medium" style="color:#94a3b8;">Planname</label>';
+    html += '<input id="plan-name" class="input-field mt-1" value="' + (plan.name || '') + '" /></div>';
+    html += '<div><label class="text-sm font-medium" style="color:#94a3b8;">Beschreibung</label>';
+    html += '<input id="plan-desc" class="input-field mt-1" value="' + (plan.description || '') + '" /></div>';
+    html += '<div class="grid grid-cols-2 gap-3">';
+    html += '<div><label class="text-sm font-medium" style="color:#94a3b8;">Level</label>';
+    html += '<select id="plan-level" class="input-field mt-1"><option' + (plan.level==='Einsteiger'?' selected':'') + '>Einsteiger</option><option' + (plan.level==='Intermediate'?' selected':'') + '>Intermediate</option><option' + (plan.level==='Fortgeschritten'?' selected':'') + '>Fortgeschritten</option></select></div>';
+    html += '<div><label class="text-sm font-medium" style="color:#94a3b8;">Frequenz</label>';
+    html += '<input id="plan-freq" class="input-field mt-1" value="' + (plan.frequency || '') + '" /></div>';
+    html += '</div>';
+
+    html += '<div>';
+    html += '<div class="flex items-center justify-between mb-2">';
+    html += '<label class="text-sm font-medium" style="color:#94a3b8;">Trainingstage</label>';
+    html += '<button class="btn-secondary text-xs py-1 px-2" onclick="PlansPage.addDayToForm()">+ Tag</button>';
+    html += '</div>';
+    html += '<div id="plan-days-container" class="space-y-3">';
+
+    plan.days.forEach(function(day, dayIdx) {
+      html += '<div class="card2 p-3" id="day-block-' + dayIdx + '">';
+      html += '<div class="flex items-center gap-2 mb-2">';
+      html += '<input class="input-field text-sm py-1.5 flex-1" placeholder="Tag ' + (dayIdx+1) + ' Name" id="day-name-' + dayIdx + '" value="' + (day.name || '') + '" />';
+      if (dayIdx > 0) html += '<button class="btn-danger text-xs py-1.5 px-2" onclick="document.getElementById(\'day-block-' + dayIdx + '\').remove()">✕</button>';
+      html += '</div>';
+      html += '<div id="day-ex-' + dayIdx + '" class="space-y-1.5">';
+      day.exercises.forEach(function(ex, exIdx) {
+        var opts = allEx.map(function(e){
+          return '<option value="' + e.id + '"' + (e.id === ex.exerciseId ? ' selected' : '') + '>' + e.name + '</option>';
+        }).join('');
+        html += '<div class="flex gap-1.5 items-center" id="ex-row-' + dayIdx + '-' + exIdx + '">' +
+          '<select class="input-field text-xs py-1.5 flex-1" id="ex-id-' + dayIdx + '-' + exIdx + '">' + opts + '</select>' +
+          '<input class="input-field text-xs py-1.5 w-12 text-center" id="ex-sets-' + dayIdx + '-' + exIdx + '" value="' + ex.sets + '" type="number" min="1" />' +
+          '<input class="input-field text-xs py-1.5 w-20 text-center" id="ex-reps-' + dayIdx + '-' + exIdx + '" value="' + ex.reps + '" />' +
+          '<input class="input-field text-xs py-1.5 w-14 text-center" id="ex-rest-' + dayIdx + '-' + exIdx + '" value="' + ex.restSeconds + '" type="number" />' +
+          '</div>';
+      });
+      html += '</div>';
+      html += '<button class="btn-secondary text-xs py-1 px-2 mt-2 w-full" onclick="PlansPage.addExToDay(' + dayIdx + ')">+ Übung</button>';
+      html += '</div>';
+      window['_dayExCount_' + dayIdx] = day.exercises.length;
+    });
+
+    html += '</div></div>';
+    html += '<div class="flex gap-3 mt-2">';
+    html += '<button class="btn-secondary flex-1 py-2.5" onclick="App.modal.close()">Abbrechen</button>';
+    html += '<button class="btn-primary flex-1 py-2.5" onclick="PlansPage.saveNewPlan()">Speichern</button>';
+    html += '</div></div>';
+
+    window._planDayCount = plan.days.length;
+    App.modal.open(html);
+  }
+
+  return { render, viewPlan, setActive, deletePlan, showCreateModal, showEditModal, addDayToForm, addExToDay, saveNewPlan };
 })();
