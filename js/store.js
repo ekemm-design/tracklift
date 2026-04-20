@@ -98,7 +98,7 @@ var Store = (function () {
     return new Date().toISOString().slice(0, 10);
   }
 
-  // Workout streak calculation
+  // Workout streak – rest days (planId:'rest') count as valid days
   function getStreak() {
     var logs = getWorkoutLogs().map(function(l){ return l.date; }).sort();
     if (!logs.length) return 0;
@@ -106,7 +106,6 @@ var Store = (function () {
     var streak = 0;
     var today = new Date(); today.setHours(0,0,0,0);
     var cursor = new Date(today);
-    // allow today or yesterday as "start" of streak
     var lastDate = new Date(unique[unique.length - 1]);
     var diff = Math.round((today - lastDate) / 86400000);
     if (diff > 1) return 0;
@@ -119,6 +118,33 @@ var Store = (function () {
       } else break;
     }
     return streak;
+  }
+
+  // Weekly workout count (excluding rest days) vs. target
+  function getWeeklyStats(targetPerWeek) {
+    var today = new Date();
+    var day = today.getDay();
+    var monday = new Date(today); monday.setDate(today.getDate() - ((day + 6) % 7)); monday.setHours(0,0,0,0);
+    var mondayStr = monday.toISOString().slice(0, 10);
+    var logs = getWorkoutLogs().filter(function(l) {
+      return l.date >= mondayStr && l.planId !== 'rest';
+    });
+    var uniqueDays = new Set(logs.map(function(l){ return l.date; }));
+    return { done: uniqueDays.size, target: targetPerWeek || 5 };
+  }
+
+  function logRestDay() {
+    var today = todayStr();
+    // Don't add duplicate rest day for today
+    var existing = getWorkoutLogs().find(function(l){ return l.date === today && l.planId === 'rest'; });
+    if (existing) return existing;
+    var log = { id: uid(), date: today, planId: 'rest', dayName: '😴 Ruhetag', isRestDay: true, exercises: [] };
+    return saveWorkoutLog(log);
+  }
+
+  function isRestDayToday() {
+    var today = todayStr();
+    return !!getWorkoutLogs().find(function(l){ return l.date === today && l.planId === 'rest'; });
   }
 
   // Volume stats
@@ -226,6 +252,7 @@ var Store = (function () {
     getSettings, saveSetting,
     getActiveWorkout, saveActiveWorkout, clearActiveWorkout,
     getStreak, getWeeklyVolume, getTotalVolume, getPersonalRecords,
+    getWeeklyStats, logRestDay, isRestDayToday,
     exportData, importData,
   };
 })();

@@ -9,8 +9,17 @@ var DashboardPage = (function () {
     var activePlanId = Store.getActivePlanId();
     var activePlan = activePlanId ? PlansDB.getById(activePlanId) : null;
     var weekData = Utils.getWeeklyVolumeArray(8);
-    var lastLog = logs.length ? logs[logs.length - 1] : null;
-    var totalWorkouts = logs.length;
+    var lastLog = logs.filter(function(l){ return !l.isRestDay; }).slice(-1)[0] || null;
+    var totalWorkouts = logs.filter(function(l){ return !l.isRestDay; }).length;
+    var isRestToday = Store.isRestDayToday();
+
+    // Weekly stats
+    var targetPerWeek = 5;
+    if (activePlan && activePlan.frequency) {
+      var m = activePlan.frequency.match(/(\d+)/);
+      if (m) targetPerWeek = parseInt(m[1]);
+    }
+    var weekStats = Store.getWeeklyStats(targetPerWeek);
 
     // Next workout suggestion
     var nextWorkout = null;
@@ -50,11 +59,35 @@ var DashboardPage = (function () {
     html += '<h1 class="text-2xl font-bold" style="color:#e2e8f0;">Guten ' + getGreeting() + '! 👋</h1>';
     html += '<p class="text-sm mt-0.5" style="color:#64748b;">' + Utils.fmtDate(Store.todayStr()) + '</p>';
     html += '</div>';
-    if (streak > 0) {
-      html += '<div class="card2 px-4 py-2 text-center">';
-      html += '<div class="text-2xl font-bold" style="color:#fbbf24;">' + streak + ' 🔥</div>';
-      html += '<div class="text-xs mt-0.5" style="color:#64748b;">Tage Serie</div>';
-      html += '</div>';
+    html += '<div class="card2 px-4 py-2 text-center">';
+    html += '<div class="text-2xl font-bold" style="color:#fbbf24;">' + (streak > 0 ? streak + ' 🔥' : '0 🔥') + '</div>';
+    html += '<div class="text-xs mt-0.5" style="color:#64748b;">Tage Serie</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // ── Wöchentlicher Fortschritt + Ruhetag ───────────────────
+    var pct = Math.min(100, Math.round(weekStats.done / weekStats.target * 100));
+    var ringColor = pct >= 100 ? '#10b981' : '#7c3aed';
+    html += '<div class="card p-4 flex items-center gap-4">';
+    // SVG ring
+    var r = 28, circ = Math.round(2 * Math.PI * r);
+    var filled = Math.round(circ * pct / 100);
+    html += '<svg width="72" height="72" viewBox="0 0 72 72" class="flex-shrink-0">';
+    html += '<circle cx="36" cy="36" r="' + r + '" fill="none" stroke="#1e1e2e" stroke-width="7"/>';
+    html += '<circle cx="36" cy="36" r="' + r + '" fill="none" stroke="' + ringColor + '" stroke-width="7" stroke-linecap="round"';
+    html += ' stroke-dasharray="' + filled + ' ' + circ + '" transform="rotate(-90 36 36)"/>';
+    html += '<text x="36" y="40" text-anchor="middle" fill="' + ringColor + '" font-size="14" font-weight="700" font-family="system-ui">' + weekStats.done + '/' + weekStats.target + '</text>';
+    html += '</svg>';
+    html += '<div class="flex-1">';
+    html += '<div class="font-semibold">Diese Woche</div>';
+    html += '<div class="text-sm mt-0.5" style="color:#64748b;">' + weekStats.done + ' von ' + weekStats.target + ' Trainings</div>';
+    if (pct >= 100) html += '<div class="text-xs mt-1" style="color:#10b981;">✓ Wochenziel erreicht! 🎉</div>';
+    html += '</div>';
+    if (isRestToday) {
+      html += '<div class="text-center flex-shrink-0"><div class="text-2xl">😴</div><div class="text-xs mt-1" style="color:#64748b;">Ruhetag</div></div>';
+    } else {
+      html += '<button onclick="DashboardPage.logRestDay()" class="btn-secondary text-sm py-2 px-3 flex-shrink-0 flex flex-col items-center gap-0.5">';
+      html += '<span class="text-lg">😴</span><span style="font-size:11px;">Ruhetag</span></button>';
     }
     html += '</div>';
 
@@ -222,5 +255,12 @@ var DashboardPage = (function () {
     });
   }
 
-  return { render };
+  function logRestDay() {
+    Store.logRestDay();
+    App.updateSidebarStreak();
+    Utils.toast('Ruhetag eingetragen – Streak bleibt! 😴');
+    render();
+  }
+
+  return { render, logRestDay };
 })();
