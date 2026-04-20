@@ -139,7 +139,12 @@
     <!-- Mobile header -->
     <header class="md:hidden px-4 py-3 flex items-center justify-between" style="background:#0d0d14; border-bottom:1px solid #1a1a26; position:sticky; top:0; z-index:50;">
       <div class="sidebar-logo text-base" style="color:#a78bfa;">⚡ TrackLift</div>
-      <div class="text-xs" id="mobile-streak-display" style="color:#fbbf24;"></div>
+      <div class="flex items-center gap-3">
+        <div class="text-xs" id="mobile-streak-display" style="color:#fbbf24;"></div>
+        <button onclick="App.sync.showModal()" style="color:#64748b;padding:4px;" title="Sync & Backup">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        </button>
+      </div>
     </header>
 
     <main id="main-content" class="flex-1 p-4 md:p-6 pb-24 md:pb-6 max-w-5xl mx-auto w-full">
